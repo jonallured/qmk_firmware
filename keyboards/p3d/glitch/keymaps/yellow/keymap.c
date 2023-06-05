@@ -6,6 +6,10 @@ enum layers {
   _RGB
 };
 
+enum keycodes {
+  TURBO = SAFE_RANGE
+};
+
 // Layer Toggle
 #define T_RGB TG(_RGB)
 
@@ -21,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_TAB,        KC_Q, KC_W, KC_E, KC_R, KC_T,          KC_Y, KC_U, KC_I, KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,          KC_DEL,
       KC_LCTL,       KC_A, KC_S, KC_D, KC_F, KC_G,          KC_H, KC_J, KC_K, KC_L,    KC_SCLN, KC_QUOT, KC_ENT,                    KC_PGUP,
       KC_LSFT,       KC_Z, KC_X, KC_C, KC_V, KC_B,          KC_B, KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   KC_PGDN,
-      KC_LCTL, KC_LALT,          KC_LGUI,    SPC_FUNC,        SPC_FUNC,     MO(_FUNCTION),                KC_RGUI, KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
+      TURBO, KC_LALT,          KC_LGUI,    SPC_FUNC,        SPC_FUNC,     MO(_FUNCTION),                KC_RGUI, KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
   ),
   [_FUNCTION] = LAYOUT_all(
       KC_GRAVE,    _______, _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______, _______, _______, _______,          T_RGB,
@@ -99,3 +103,22 @@ bool oled_task_user(void) {
     return false;
 }
 #endif
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+    case TURBO:
+        if (record->event.pressed) {
+            register_code(KC_LEFT_SHIFT)
+            register_code(KC_LEFT_ALT)
+            register_code(KC_LEFT_CTRL)
+            register_code(KC_LCMD)
+        } else {
+            unregister_code(KC_LEFT_SHIFT)
+            unregister_code(KC_LEFT_ALT)
+            unregister_code(KC_LEFT_CTRL)
+            unregister_code(KC_LCMD)
+        }
+        break;
+    }
+    return true;
+};
